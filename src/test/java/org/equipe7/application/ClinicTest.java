@@ -131,4 +131,70 @@ class ClinicTest {
 
         assertEquals(1, clinic.getIndexRadioPatient("Patrick"));
     }
+    @Test
+    public void sorting_nonEmptyDoctorLine_whenSortingByGravity_whenHighGravityFluPatient_firstInLine() {
+        Clinic clinic = new Clinic(TriageType.GRAVITY, TriageType.FIFO);
+
+        clinic.triagePatient("Jeremy",1,VisibleSymptom.SPRAIN);
+        clinic.triagePatient("Torben", 7, VisibleSymptom.FLU);
+
+        assertEquals(0, clinic.getIndexDoctorPatient("Torben"));
+    }
+
+    @Test
+    public void given_nonEmptyDoctorLine_whenSortingByGravity_whenHighGravityPatients_thenFirstsInLine() {
+        Clinic clinic = new Clinic(TriageType.GRAVITY, TriageType.FIFO);
+
+        clinic.triagePatient("Louis",2,VisibleSymptom.COLD);
+        clinic.triagePatient("Carmelle",6,VisibleSymptom.FLU);
+        clinic.triagePatient("Torben", 7, VisibleSymptom.FLU);
+
+
+        assertEquals(0, clinic.getIndexDoctorPatient("Torben"));
+        assertEquals(1, clinic.getIndexDoctorPatient("Carmelle"));
+        assertEquals(2, clinic.getIndexDoctorPatient("Louis"));
+
+    }
+
+    @Test
+    public void given_sortingByGravity_whenOnlyFlu_EveryoneInTleLine() {
+        Clinic clinic = new Clinic(TriageType.GRAVITY, TriageType.FIFO);
+
+        clinic.triagePatient("Louis",8,VisibleSymptom.FLU);
+        clinic.triagePatient("Carmelle",7,VisibleSymptom.FLU);
+        clinic.triagePatient("Torben", 6, VisibleSymptom.FLU);
+
+        assertEquals(0, clinic.getIndexDoctorPatient("Louis"));
+        assertEquals(1, clinic.getIndexDoctorPatient("Carmelle"));
+        assertEquals(2, clinic.getIndexDoctorPatient("Torben"));
+    }
+
+    @Test
+    public void given_nonEmptyBothLines_whenSortingByGravity_whenBrokenBones_thenSecondInRadiology() {
+        Clinic clinic = new Clinic(TriageType.GRAVITY, TriageType.FIFO);
+
+        clinic.triagePatient("Louis",2,VisibleSymptom.FLU);
+        clinic.triagePatient("Jeremy", 4, VisibleSymptom.SPRAIN);
+        clinic.triagePatient("Émilie",6,VisibleSymptom.SPRAIN);
+        clinic.triagePatient("Torben", 7, VisibleSymptom.BROKEN_BONE);
+
+        assertEquals(0,clinic.getIndexRadioPatient("Jeremy"));
+        assertEquals(1, clinic.getIndexRadioPatient("Torben"));
+        assertEquals(2, clinic.getIndexRadioPatient("Émilie"));
+
+    }
+
+    @Test
+    public void given_nonEmptyBothLines_whenSortingByGravity_whenBrokenBones_thenSecondsAndMoreInRadiology_orderOfSecondsIsByGravity(){
+        Clinic clinic = new Clinic(TriageType.GRAVITY, TriageType.FIFO);
+
+        clinic.triagePatient("Louis",2,VisibleSymptom.FLU);
+        clinic.triagePatient("Jeremy", 4, VisibleSymptom.SPRAIN);
+        clinic.triagePatient("Émilie",6,VisibleSymptom.BROKEN_BONE);
+        clinic.triagePatient("Torben", 7, VisibleSymptom.BROKEN_BONE);
+
+        assertEquals(0,clinic.getIndexRadioPatient("Jeremy"));
+        assertEquals(1, clinic.getIndexRadioPatient("Torben"));
+        assertEquals(2, clinic.getIndexRadioPatient("Émilie"));
+    }
 }

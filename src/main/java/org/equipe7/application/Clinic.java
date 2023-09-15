@@ -20,10 +20,10 @@ public class Clinic {
 
     public void triagePatient(String name, int gravity, VisibleSymptom visibleSymptom) {
         Patient patient = new Patient(name, gravity, visibleSymptom);
-        this.fileDoctor.add(patient);
+        this.assignFileDoctor(patient);
 
-        if(visibleSymptom.equals(VisibleSymptom.SPRAIN) || visibleSymptom.equals(VisibleSymptom.BROKEN_BONE)) {
-            this.fileRadio.add(patient);
+        if (visibleSymptom.equals(VisibleSymptom.SPRAIN) || visibleSymptom.equals(VisibleSymptom.BROKEN_BONE)) {
+            this.assignFileRadio(patient);
         }
     }
 
@@ -43,11 +43,49 @@ public class Clinic {
         return this.fileRadio.isEmpty();
     }
 
+    public void assignFileDoctor(Patient newPatient) {
+        if (this.triageDoctor == TriageType.GRAVITY && newPatient.getGravite() >= 5 && newPatient.getSymptom() == VisibleSymptom.FLU) {
+            int compteur;
+            for (compteur = 0; compteur < this.fileDoctor.size(); compteur++) {
+                Patient currentPatient = this.fileDoctor.get(compteur);
+                if (currentPatient.getSymptom() != VisibleSymptom.FLU || currentPatient.getGravite() < newPatient.getGravite()) {
+                    this.fileDoctor.add(compteur, newPatient);
+                    break;
+                }
+            }
+            if (compteur == this.fileDoctor.size()) {
+                this.fileDoctor.add(newPatient);
+            }
+        } else {
+            this.fileDoctor.add(newPatient);
+        }
+    }
+
+    public void assignFileRadio(Patient newPatient) {
+        if (this.triageDoctor == TriageType.GRAVITY && newPatient.getGravite() >= 5 && newPatient.getSymptom() == VisibleSymptom.BROKEN_BONE) {
+            int compteur;
+            for (compteur = 0; compteur < this.fileRadio.size(); compteur++) {
+                Patient currentPatient = this.fileDoctor.get(compteur);
+                if (compteur > 0 && (currentPatient.getSymptom() != VisibleSymptom.BROKEN_BONE || currentPatient.getGravite() < newPatient.getGravite())) {
+                    this.fileRadio.add(compteur, newPatient);
+                    break;
+                }
+            }
+            if (compteur == this.fileRadio.size()) {
+                this.fileRadio.add(newPatient);
+            }
+        } else {
+            this.fileRadio.add(newPatient);
+        }
+
+    }
+
+
     public int getIndexDoctorPatient(String nom) {
         int pos = -1;
 
-        for(int compteur = 0; compteur < this.fileDoctor.size(); compteur++) {
-            if(this.fileDoctor.get(compteur).getName().equals(nom)) {
+        for (int compteur = 0; compteur < this.fileDoctor.size(); compteur++) {
+            if (this.fileDoctor.get(compteur).getName().equals(nom)) {
                 pos = compteur;
                 break;
             }
@@ -59,8 +97,8 @@ public class Clinic {
     public int getIndexRadioPatient(String nom) {
         int pos = -1;
 
-        for(int compteur = 0; compteur < this.fileRadio.size(); compteur++) {
-            if(this.fileRadio.get(compteur).getName().equals(nom)) {
+        for (int compteur = 0; compteur < this.fileRadio.size(); compteur++) {
+            if (this.fileRadio.get(compteur).getName().equals(nom)) {
                 pos = compteur;
                 break;
             }
